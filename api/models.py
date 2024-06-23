@@ -6,6 +6,24 @@ class Movie(models.Model):
     title = models.CharField(max_length=32)
     description = models.TextField(max_length=360)
 
+    #! kode "no_of_ratings" adalah method yang mengembalikan jumlah raings yg diberikan pada movie
+    def no_of_ratings(self):
+        ratings = Rating.objects.filter(movie=self)
+        return len(ratings)
+    
+    #!kode ini berufngsi menghitung rating rata-rata movie yang diberikan oleh user 
+    def avg_rating(self):
+        sum = 0
+        ratings = Rating.objects.filter(movie=self)
+        for rating in ratings:
+            sum += rating.stars
+            
+        if len(ratings) > 0:
+            return sum / len(ratings)
+        else:
+            return 0
+
+
 class Rating(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
