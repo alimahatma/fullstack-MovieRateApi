@@ -2,13 +2,22 @@ from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.authentication import TokenAuthentication #!fungsi autentikasi token 
 from .models import Movie, Rating
-from .serializer import MovieSerialzer, RatingSerializer
+from .serializer import MovieSerialzer, RatingSerializer, UserSerializer
 from django.contrib.auth.models import User
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 class MovieViewSet(viewsets.ModelViewSet):
     queryset = Movie.objects.all()
     serializer_class = MovieSerialzer
+    #!autentikasi class ini bertujan untuk mendapatkan hak akses berupa akses token
+    #!dengan kode contoh token "faba811fe68bfab32066fcd8e48271c829642764" : user dapat mengakses API ini
+    authentication_classes = (TokenAuthentication, )
 
     @action(detail=True, methods=['POST'])
     def rate_movie(self, request, pk=None):
@@ -16,8 +25,9 @@ class MovieViewSet(viewsets.ModelViewSet):
 
             movie = Movie.objects.get(id=pk)
             stars = request.data['stars']
-            # user = request.user
-            user = User.objects.get(id=1)
+            user = request.user
+            # print('user:', user)
+            
 
             #!kode ini bertujuan untuk meng-update rating
             #!jika rating sudah ada, maka update, jika belum ada, objek di create
@@ -41,4 +51,5 @@ class MovieViewSet(viewsets.ModelViewSet):
 class RatingViewSet(viewsets.ModelViewSet):
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
+    authentication_classes = (TokenAuthentication, )
 
