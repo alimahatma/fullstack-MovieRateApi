@@ -4,7 +4,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Movie(models.Model):
     title = models.CharField(max_length=32)
-    description = models.TextField(max_length=360)
+    description = models.TextField()
 
     #! kode "no_of_ratings" adalah method yang mengembalikan jumlah raings yg diberikan pada movie
     def no_of_ratings(self):
@@ -22,6 +22,9 @@ class Movie(models.Model):
             return sum / len(ratings)
         else:
             return 0
+        
+    def __str__(self):
+        return self.title
 
 
 class Rating(models.Model):
